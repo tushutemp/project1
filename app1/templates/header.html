@@ -1,0 +1,532 @@
+<nav>
+    <div class="logo">
+        <span>Céline</span>
+    </div>
+    
+    <div class="nav-links">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shop' %}">Shop</a>
+        <a href="{% url 'about' %}">About Us</a>
+        <a href="{% url 'services' %}">Services</a>
+        <a href="{% url 'blog' %}">Blogs</a>
+        <a href="{% url 'contact' %}">Contact</a>
+        
+        {% if user.is_authenticated %}
+        <a href="{% url 'wishlist' %}" class="icon-link">
+            <i class="fa-regular fa-heart"></i>
+            {% if wishlist_count and wishlist_count > 0 %}
+                <span class="cart-count" style="top: -5px; right: -5px;">{{ wishlist_count }}</span>
+            {% endif %}
+        </a>
+        
+        <!-- User dropdown for authenticated users -->
+        <div class="user-dropdown">
+            <button class="user-btn">
+                <i class="fa-solid fa-user"></i>
+                {{ user.username }}
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="{% url 'orders' %}">
+                    <i class="fa-solid fa-box"></i> My Orders
+                </a>
+                <a href="{% url 'wishlist' %}">
+                    <i class="fa-regular fa-heart"></i> Wishlist
+                </a>
+                <a href="{% url 'logout' %}">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        {% else %}
+            <!-- Show signup and login for anonymous users -->
+            <a href="{% url 'signup' %}">Sign Up</a>
+            <a href="{% url 'login' %}" class="icon-link"><i class="fa-solid fa-user"></i></a>
+        {% endif %}
+        
+        <!-- Cart with item count (always visible) -->
+        <a href="{% url 'cart' %}" class="icon-link cart-link">
+            <i class="fa-solid fa-cart-shopping"></i>
+            {% if cart_item_count and cart_item_count > 0 %}
+                <span class="cart-count">{{ cart_item_count }}</span>
+            {% endif %}
+        </a>
+    </div>
+    
+    <div class="menu-toggle" id="menuToggle">
+        <span class="line line1"></span>
+        <span class="line line2"></span>
+        <span class="line line3"></span>
+    </div>
+</nav>
+
+<!-- Mobile Navigation -->
+<div class="mobile-nav" id="mobileNav">
+    <button class="close-btn" id="closeBtn">
+        <i class="fas fa-times"></i>
+    </button>
+    
+    {% if user.is_authenticated %}
+        <!-- Show user info at top for mobile -->
+        <div class="mobile-user-info">
+            <i class="fa-solid fa-user"></i>
+            <span>Hello, {{ user.username }}</span>
+        </div>
+    {% else %}
+        <!-- Show login/signup buttons for anonymous users -->
+        <div class="mobile-auth-buttons">
+            <a href="{% url 'signup' %}" class="mobile-auth-btn signup-btn">Sign Up</a>
+            <a href="{% url 'login' %}" class="mobile-auth-btn login-btn">Login</a>
+        </div>
+    {% endif %}
+    
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'shop' %}">Shop</a>
+    <a href="{% url 'about' %}">About Us</a>
+    <a href="{% url 'services' %}">Services</a>
+    <a href="{% url 'blog' %}">Blogs</a>
+    <a href="{% url 'contact' %}">Contact</a>
+    
+    {% if user.is_authenticated %}
+        <a href="{% url 'orders' %}">
+            <i class="fa-solid fa-box"></i> My Orders
+        </a>
+        <a href="{% url 'wishlist' %}">
+            <i class="fa-regular fa-heart"></i> Wishlist
+        </a>
+        <a href="{% url 'logout' %}">
+            <i class="fa-solid fa-sign-out-alt"></i> Logout
+        </a>
+    {% else %}
+        <a href="{% url 'signup' %}">Sign Up</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    
+    <a href="{% url 'cart' %}" class="mobile-cart-link">
+        <i class="fa-solid fa-cart-shopping"></i> Cart
+        {% if cart_item_count and cart_item_count > 0 %}
+            <span class="cart-count-mobile">({{ cart_item_count }})</span>
+        {% endif %}
+    </a>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<style>
+    :root {
+      --primary-color: #8b5a2b;
+      --secondary-color: #d4af7a;
+      --accent-color: #5b4325;
+      --light-bg: #f9f3ec;
+      --dark-text: #333;
+      --light-text: #fff;
+      --gradient-primary: linear-gradient(135deg, #8b5a2b 0%, #d4af7a 100%);
+      --gradient-secondary: linear-gradient(135deg, #d4af7a 0%, #f9f3ec 100%);
+      --gradient-dark: linear-gradient(135deg, #5b4325 0%, #8b5a2b 100%);
+      --shadow: 0 4px 15px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+
+    /* Navigation Styles */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 5%;
+      background: var(--gradient-primary);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--light-text);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .nav-links a {
+      color: var(--light-text);
+      font-weight: 500;
+      transition: var(--transition);
+      position: relative;
+      padding: 0.5rem 0;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-2px);
+    }
+
+    .nav-links a:not(.icon-link)::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--light-text);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .icon-link {
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.2);
+      padding: 0.5rem;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .icon-link:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.1);
+    }
+
+    /* User dropdown styles */
+    .user-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .user-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--light-text);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        transition: var(--transition);
+        font-size: 1rem;
+    }
+
+    .user-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.05);
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background: var(--gradient-dark);
+        min-width: 200px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        z-index: 1;
+        right: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+
+    .dropdown-content a {
+        color: var(--light-text);
+        padding: 12px 16px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        transition: var(--transition);
+    }
+
+    .dropdown-content a i {
+        width: 20px;
+    }
+
+    .dropdown-content a:hover {
+        background: rgba(255,255,255,0.1);
+        padding-left: 20px;
+    }
+
+    .dropdown-content a:last-child {
+        border-bottom: none;
+    }
+
+    .user-dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    /* Cart icon with count */
+    .cart-link {
+        position: relative;
+    }
+
+    .cart-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Animated Menu Toggle */
+    .menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        width: 30px;
+        height: 25px;
+        justify-content: space-between;
+        position: relative;
+        z-index: 1001;
+    }
+
+    .menu-toggle .line {
+        display: block;
+        height: 3px;
+        width: 100%;
+        background: var(--light-text);
+        border-radius: 3px;
+        transition: var(--transition);
+        transform-origin: center;
+    }
+
+    /* Animation when menu is open */
+    .menu-toggle.active .line1 {
+        transform: rotate(45deg) translate(8px, 8px);
+    }
+
+    .menu-toggle.active .line2 {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    .menu-toggle.active .line3 {
+        transform: rotate(-45deg) translate(8px, -8px);
+    }
+
+    /* Mobile Navigation */
+    .mobile-nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 350px;
+        height: 100vh;
+        background: var(--gradient-dark);
+        padding: 2rem;
+        z-index: 1002;
+        transition: right 0.4s ease;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        overflow-y: auto;
+    }
+
+    .mobile-nav.active {
+        right: 0;
+    }
+
+    .mobile-nav a {
+        color: var(--light-text);
+        font-size: 1.1rem;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        transition: var(--transition);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mobile-nav a:hover {
+        padding-left: 10px;
+    }
+
+    .mobile-user-info {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-weight: 500;
+        color: var(--light-text);
+        font-size: 1.1rem;
+    }
+
+    .mobile-auth-buttons {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        margin-bottom: 1rem;
+    }
+
+    .mobile-auth-btn {
+        flex: 1;
+        text-align: center;
+        padding: 0.8rem 1rem;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+
+    .mobile-auth-btn.signup-btn {
+        background: var(--secondary-color);
+        color: var(--dark-text);
+    }
+
+    .mobile-auth-btn.login-btn {
+        background: rgba(255,255,255,0.2);
+        color: var(--light-text);
+    }
+
+    .mobile-auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .cart-count-mobile {
+        color: var(--secondary-color);
+        font-weight: bold;
+        margin-left: 0.5rem;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 0.7rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--light-text);
+        cursor: pointer;
+        transition: var(--transition);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        z-index: 1003;
+    }
+
+    .close-btn:hover {
+        background: rgba(255,255,255,0.1);
+        transform: rotate(90deg);
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition);
+    }
+
+    .overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .nav-links a:not(.icon-link) {
+            display: none;
+        }
+        
+        .user-dropdown {
+            display: none;
+        }
+        
+        .menu-toggle {
+            display: flex;
+        }
+        
+        nav {
+            padding: 1rem 5%;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .logo {
+            font-size: 1.5rem;
+        }
+        
+        .icon-link {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<script>
+    // Mobile menu functionality with toggle animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        const closeBtn = document.getElementById('closeBtn');
+        const overlay = document.getElementById('overlay');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                mobileNav.classList.add('active');
+                overlay.classList.add('active');
+                menuToggle.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                mobileNav.classList.remove('active');
+                overlay.classList.remove('active');
+                if (menuToggle) menuToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+        
+        if (overlay) {
+            overlay.addEventListener('click', function() {
+                mobileNav.classList.remove('active');
+                overlay.classList.remove('active');
+                if (menuToggle) menuToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+    });
+</script>

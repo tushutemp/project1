@@ -1,0 +1,673 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Céline Fashion</title>
+    <!-- font awesome -->
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+<!-- google font -->
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Pacifico&family=Rubik+Bubbles&display=swap" rel="stylesheet">
+<!-- <link rel="stylesheet" href="{% static 'home.css' %}"> -->
+    <link rel="stylesheet" href="{%static 'css/home.css' %}">
+    <style>
+      /* CSS Variables for consistent theming */
+      :root {
+        --primary-color: #8b5a2b;
+        --secondary-color: #d4af7a;
+        --accent-color: #5b4325;
+        --light-bg: #f9f3ec;
+        --dark-text: #333;
+        --light-text: #fff;
+        --gradient-primary: linear-gradient(135deg, #8b5a2b 0%, #d4af7a 100%);
+        --gradient-secondary: linear-gradient(135deg, #f6dab5 0%, #f9f3ec 100%);
+        --gradient-dark: linear-gradient(135deg, #5b4325 0%, #8b5a2b 100%);
+        --shadow: 0 4px 15px rgba(0,0,0,0.1);
+        --transition: all 0.3s ease;
+      }
+
+      *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--dark-text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+      
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      
+      /* Navigation Styles */
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 5%;
+        background: var(--gradient-primary);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .logo {
+        font-family: 'Dancing Script', cursive;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--light-text);
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.8rem;
+      }
+
+      .nav-links a {
+        color: var(--light-text);
+        font-weight: 500;
+        transition: var(--transition);
+        position: relative;
+        padding: 0.5rem 0;
+      }
+
+      .nav-links a:hover {
+        transform: translateY(-2px);
+      }
+
+      .nav-links a:not(.icon-link)::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--light-text);
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .icon-link {
+        font-size: 1.2rem;
+        background: rgba(255,255,255,0.2);
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+      }
+
+      .icon-link:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
+      }
+
+      /* Mobile Navigation */
+      .menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        width: 30px;
+        height: 25px;
+        justify-content: space-between;
+      }
+
+      .menu-toggle span {
+        display: block;
+        height: 3px;
+        width: 100%;
+        background: var(--light-text);
+        border-radius: 3px;
+        transition: var(--transition);
+      }
+
+      .mobile-nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 350px;
+        height: 100vh;
+        background: var(--gradient-dark);
+        padding: 2rem;
+        z-index: 999;
+        transition: right 0.4s ease;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .mobile-nav.active {
+        right: 0;
+      }
+
+      .mobile-nav a {
+        color: var(--light-text);
+        font-size: 1.2rem;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        transition: var(--transition);
+      }
+
+      .mobile-nav a:hover {
+        padding-left: 10px;
+      }
+
+      .mobile-nav .close-btn {
+        align-self: flex-end;
+        font-size: 1.5rem;
+        border: none;
+        margin-bottom: 1rem;
+        background: none;
+        color: var(--light-text);
+        cursor: pointer;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition);
+      }
+
+      .overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* About Section */
+      .background {
+        background: var(--gradient-secondary);
+        width: 100%;
+        min-height: 700px;
+        display: flex;
+        align-items: center;
+        padding: 3rem 5%;
+      }
+
+      .about-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .para {
+        flex: 1;
+        padding: 2rem 0;
+      }
+
+      .about-title {
+        font-family: 'Dancing Script', cursive;
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--accent-color);
+        margin-bottom: 2rem;
+        position: relative;
+        display: inline-block;
+      }
+
+      .about-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 80px;
+        height: 3px;
+        background: var(--gradient-primary);
+      }
+
+      .para p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+        color: #555;
+      }
+
+      .para strong {
+        color: var(--accent-color);
+        font-weight: 600;
+      }
+
+      .image-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      .image {
+        width: 100%;
+        max-width: 500px;
+        height: 500px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        position: relative;
+      }
+
+      .image::before {
+        content: '';
+        position: absolute;
+        top: -15px;
+        left: -15px;
+        right: 15px;
+        bottom: 15px;
+        border: 2px solid var(--secondary-color);
+        border-radius: 20px;
+        z-index: -1;
+      }
+
+      .image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+      }
+
+      .image:hover img {
+        transform: scale(1.05);
+      }
+
+      /* Values Section */
+      .values-section {
+        padding: 5rem 5%;
+        background: white;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        color: var(--accent-color);
+        margin-bottom: 3rem;
+        position: relative;
+      }
+
+      .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--gradient-primary);
+      }
+
+      .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .value-card {
+        background: var(--light-bg);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+      }
+
+      .value-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+      }
+
+      .value-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+      }
+
+      .value-card h3 {
+        color: var(--accent-color);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+
+      .value-card p {
+        color: #555;
+        line-height: 1.6;
+      }
+
+      /* Team Section */
+      .team-section {
+        padding: 5rem 5%;
+        background: var(--gradient-secondary);
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .team-member {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        text-align: center;
+      }
+
+      .team-member:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+      }
+
+      .member-image {
+        width: 100%;
+        height: 250px;
+        overflow: hidden;
+      }
+
+      .member-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+      }
+
+      .team-member:hover .member-image img {
+        transform: scale(1.1);
+      }
+
+      .member-info {
+        padding: 1.5rem;
+      }
+
+      .member-info h3 {
+        color: var(--accent-color);
+        margin-bottom: 0.5rem;
+        font-size: 1.3rem;
+      }
+
+      .member-info p {
+        color: #777;
+        font-style: italic;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .about-content {
+          gap: 3rem;
+        }
+        
+        .about-title {
+          font-size: 3rem;
+        }
+        
+        .image {
+          height: 450px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+        
+        .menu-toggle {
+          display: flex;
+        }
+        
+        .background {
+          padding: 2rem 5%;
+        }
+        
+        .about-content {
+          flex-direction: column;
+          gap: 2rem;
+        }
+        
+        .para {
+          order: 2;
+          text-align: center;
+        }
+        
+        .image-container {
+          order: 1;
+        }
+        
+        .about-title::after {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+        
+        .image {
+          height: 400px;
+        }
+        
+        .section-title {
+          font-size: 2rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        nav {
+          padding: 1rem 5%;
+        }
+        
+        .logo {
+          font-size: 1.8rem;
+        }
+        
+        .background {
+          min-height: auto;
+        }
+        
+        .about-title {
+          font-size: 2.5rem;
+        }
+        
+        .para p {
+          font-size: 1rem;
+        }
+        
+        .image {
+          height: 300px;
+        }
+        
+        .values-section, .team-section {
+          padding: 3rem 5%;
+        }
+        
+        .section-title {
+          font-size: 1.8rem;
+        }
+        
+        .value-card {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  {% include 'header.html' %}
+
+  <!-- ABOUT SECTION -->
+  <div class="background">
+    <div class="about-content">
+      <div class="para">
+        <h1 class="about-title">About Us</h1>
+        <p>
+          At <strong>Céline</strong>, fashion isn't just about clothing — it's a powerful expression of identity, culture, and individuality. 
+          Founded with a vision to celebrate timeless elegance and modern sophistication, Céline brings you carefully curated pieces that 
+          speak to your story and style.
+        </p>
+        <p>
+          From everyday essentials to bold statement pieces, our collections are designed to empower and inspire.
+          We believe in quality over quantity, sustainability over fast fashion, and authenticity above all.
+        </p>
+        <p>
+          Our journey started with a simple goal: to create fashion that feels personal and purposeful.
+          Whether you're stepping into a meeting, heading to a café, or dancing the night away — Céline 
+          is with you, helping you embrace your story with confidence and grace.
+        </p>
+        <p>
+          Join us in redefining fashion — one story, one look, one soul at a time.
+        </p>
+      </div>
+      <div class="image-container">
+        <div class="image">
+          <img src="{% static 'images/img.png' %}" alt="Céline Fashion">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALUES SECTION -->
+  <section class="values-section">
+    <h2 class="section-title">Our Values</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <h3>Quality Craftsmanship</h3>
+        <p>Every piece is meticulously crafted with attention to detail, using premium materials that stand the test of time.</p>
+      </div>
+      
+      <div class="value-card">
+        <div class="value-icon">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <h3>Sustainability</h3>
+        <p>We're committed to ethical production and sustainable practices that respect both people and the planet.</p>
+      </div>
+      
+      <div class="value-card">
+        <div class="value-icon">
+          <i class="fas fa-heart"></i>
+        </div>
+        <h3>Authenticity</h3>
+        <p>We celebrate individuality and encourage our customers to express their true selves through fashion.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM SECTION -->
+  <section class="team-section">
+    <h2 class="section-title">Meet Our Team</h2>
+    <div class="team-grid">
+      <div class="team-member">
+        <div class="member-image">
+          <img src="{% static 'images/team1.jpg' %}" alt="Team Member">
+        </div>
+        <div class="member-info">
+          <h3>Sophie Laurent</h3>
+          <p>Creative Director</p>
+        </div>
+      </div>
+      
+      <div class="team-member">
+        <div class="member-image">
+          <img src="{% static 'images/team2.jpg' %}" alt="Team Member">
+        </div>
+        <div class="member-info">
+          <h3>James Wilson</h3>
+          <p>Head of Design</p>
+        </div>
+      </div>
+      
+      <div class="team-member">
+        <div class="member-image">
+          <img src="{% static 'images/team3.jpg' %}" alt="Team Member">
+        </div>
+        <div class="member-info">
+          <h3>Isabella Rossi</h3>
+          <p>Marketing Director</p>
+        </div>
+      </div>
+      
+      <div class="team-member">
+        <div class="member-image">
+          <img src="{% static 'images/team4.jpg' %}" alt="Team Member">
+        </div>
+        <div class="member-info">
+          <h3>Marcus Chen</h3>
+          <p>Production Manager</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% include 'footer.html' %}
+
+  <script>
+    // Mobile Navigation Toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    const closeBtn = document.getElementById('closeBtn');
+    const overlay = document.getElementById('overlay');
+    
+    menuToggle.addEventListener('click', () => {
+      mobileNav.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+    
+    closeBtn.addEventListener('click', () => {
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+    
+    overlay.addEventListener('click', () => {
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+    
+    // Close mobile nav when clicking on a link
+    const mobileLinks = document.querySelectorAll('.mobile-nav a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    });
+  </script>
+</body>
+</html>

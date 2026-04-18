@@ -1,0 +1,133 @@
+<!-- templates/admin_update_status.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Update Order Status</h4>
+                    <p>Order #{{ order.id }} - {{ order.tracking_number }}</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Current Status:</strong> 
+                        <span class="badge badge-{{ order.status }}">{{ order.status|title }}</span>
+                    </div>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label>Update Status to:</label>
+                            <select name="status" class="form-control" required>
+                                <option value="">Select Status</option>
+                                <option value="confirmed" {% if order.status == 'confirmed' %}disabled{% endif %}>
+                                    Confirmed
+                                </option>
+                                <option value="processing" {% if order.status == 'processing' %}disabled{% endif %}>
+                                    Processing
+                                </option>
+                                <option value="shipped" {% if order.status == 'shipped' %}disabled{% endif %}>
+                                    Shipped
+                                </option>
+                                <option value="out_for_delivery" {% if order.status == 'out_for_delivery' %}disabled{% endif %}>
+                                    Out for Delivery
+                                </option>
+                                <option value="delivered" {% if order.status == 'delivered' %}disabled{% endif %}>
+                                    Delivered
+                                </option>
+                                <option value="cancelled" {% if order.status == 'cancelled' %}disabled{% endif %}>
+                                    Cancelled
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label>Location/Notes (Optional):</label>
+                            <input type="text" name="location" class="form-control" 
+                                   placeholder="e.g., Mumbai Warehouse, Out for delivery in Andheri">
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label>Additional Notes:</label>
+                            <textarea name="note" class="form-control" rows="3" 
+                                      placeholder="Add any additional information..."></textarea>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label>Current Location (for live tracking):</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" name="latitude" class="form-control" 
+                                           placeholder="Latitude (e.g., 28.6139)">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="longitude" class="form-control" 
+                                           placeholder="Longitude (e.g., 77.2090)">
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="getCurrentLocation()">
+                                    Get Current Location
+                                </button>
+                            </small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                        <a href="{% url 'orders' %}" class="btn btn-secondary">Back to Orders</a>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tracking History -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Tracking History</h5>
+                </div>
+                <div class="card-body">
+                    {% for track in order.tracking_history.all|dictsortreversed:"created_at" %}
+                        <div class="timeline-item">
+                            <strong>{{ track.status|title }}</strong>
+                            <span class="text-muted float-right">{{ track.created_at|date:"M d, Y H:i" }}</span>
+                            {% if track.location %}
+                                <p class="mb-0">{{ track.location }}</p>
+                            {% endif %}
+                            {% if track.note %}
+                                <small class="text-muted">{{ track.note }}</small>
+                            {% endif %}
+                        </div>
+                        {% if not forloop.last %}<hr>{% endif %}
+                    {% empty %}
+                        <p>No tracking history yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.querySelector('input[name="latitude"]').value = position.coords.latitude;
+            document.querySelector('input[name="longitude"]').value = position.coords.longitude;
+            alert("Location captured successfully!");
+        }, function(error) {
+            alert("Error getting location: " + error.message);
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+</script>
+
+<style>
+.timeline-item {
+    margin-bottom: 15px;
+}
+</style>
+{% endblock %}

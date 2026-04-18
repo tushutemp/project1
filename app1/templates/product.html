@@ -1,0 +1,97 @@
+<!-- templates/product_detail.html -->
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ product.name }} - Product Details</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f6f6f6;
+    }
+    .product-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    .product-image {
+      width: 50%;
+    }
+    .product-image img {
+      width: 100%;
+      height: auto;
+    }
+    .product-info {
+      padding: 20px;
+      width: 50%;
+    }
+    .product-info h1 {
+      margin-bottom: 10px;
+    }
+    .product-info p {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .price {
+      font-size: 24px;
+      color: #e63946;
+      margin-bottom: 20px;
+    }
+    .actions form {
+      display: inline-block;
+    }
+    .cart-btn {
+      padding: 10px 20px;
+      background-color: #0d6efd;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cart-btn:hover {
+      background-color: #0a58ca;
+    }
+    a.back-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="product-container">
+    <div class="product-image">
+      <img src="{{ product.image }}" alt="{{ product.name }}">
+    </div>
+    <div class="product-info">
+      <h1>{{ product.name }}</h1>
+      <p>{{ product.description }}</p>
+      <div class="price">₹{{ product.price }}</div>
+
+      <div class="actions">
+        <form method="post" action="{% url 'add_to_cart' product.id %}">
+          {% csrf_token %}
+          <button type="submit" class="cart-btn">
+            <i class="fas fa-cart-plus"></i> Add to Cart
+          </button>
+        </form>
+      </div>
+
+      <a href="shop" class="back-link">← Back to Shop</a>
+    </div>
+  </div>
+{% include 'footer.html' %}
+</body>
+</html>

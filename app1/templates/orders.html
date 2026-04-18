@@ -1,0 +1,571 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Céline</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8b5a2b;
+            --secondary-color: #d4af7a;
+            --accent-color: #5b4325;
+            --light-bg: #f9f3ec;
+            --dark-text: #333;
+            --light-text: #fff;
+            --gradient-primary: linear-gradient(135deg, #8b5a2b 0%, #d4af7a 100%);
+            --gradient-secondary: linear-gradient(135deg, #d4af7a 0%, #f9f3ec 100%);
+            --gradient-dark: linear-gradient(135deg, #5b4325 0%, #8b5a2b 100%);
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Navigation Styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: var(--gradient-primary);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--light-text);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+        }
+
+        .nav-links a {
+            color: var(--light-text);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-links a:not(.icon-link)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--light-text);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .icon-link {
+            font-size: 1.2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .icon-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        /* Orders Section */
+        .orders-section {
+            padding: 3rem 5%;
+            min-height: 80vh;
+        }
+
+        .orders-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .orders-header h1 {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .orders-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .orders-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Order Cards */
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .order-header {
+            background: var(--gradient-primary);
+            color: var(--light-text);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .order-id {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .order-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .order-body {
+            padding: 2rem;
+        }
+
+        .order-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-group h5 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .detail-group p {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .payment-info {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .payment-method {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: var(--secondary-color);
+            color: var(--dark-text);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .no-orders i {
+            font-size: 4rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .no-orders h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Button Styles */
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            color: var(--light-text);
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+            color: white;
+        }
+
+        .btn-track {
+            background: #28a745;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .btn-track:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+
+        .btn-view {
+            background: var(--primary-color);
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+            color: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-processing {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-shipped {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-out_for_delivery {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .order-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .orders-section {
+                padding: 2rem 5%;
+            }
+
+            .orders-header h1 {
+                font-size: 2rem;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .order-body {
+                padding: 1.5rem;
+            }
+
+            .order-details-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .orders-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .order-card {
+                margin-bottom: 1.5rem;
+            }
+
+            .payment-info {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    {% include 'header.html' %}
+
+    <!-- Orders Section -->
+    <section class="orders-section">
+        <div class="container">
+            <div class="orders-header">
+                <h1>My Orders</h1>
+                <p>Track and manage your orders</p>
+            </div>
+
+            {% if orders %}
+                <div class="orders-list">
+                    {% for order in orders %}
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Order #{{ order.id }}</div>
+                                <div class="order-date">Placed on {{ order.created_at|date:"M d, Y" }}</div>
+                                {% if order.tracking_number %}
+                                    <div class="order-date mt-1">
+                                        <i class="fas fa-barcode"></i> Tracking: {{ order.tracking_number }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <span class="status-badge 
+                                {% if order.status == 'pending' %}status-pending
+                                {% elif order.status == 'confirmed' %}status-confirmed
+                                {% elif order.status == 'processing' %}status-processing
+                                {% elif order.status == 'shipped' %}status-shipped
+                                {% elif order.status == 'out_for_delivery' %}status-out_for_delivery
+                                {% elif order.status == 'delivered' %}status-delivered
+                                {% elif order.status == 'cancelled' %}status-cancelled
+                                {% else %}status-pending{% endif %}">
+                                {% if order.status == 'out_for_delivery' %}
+                                    Out For Delivery
+                                {% else %}
+                                    {{ order.status|default:"Pending"|title }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="order-body">
+                            <div class="order-details-grid">
+                                <div class="detail-group">
+                                    <h5>Shipping Address</h5>
+                                    <p><strong>{{ order.full_name }}</strong></p>
+                                    <p>{{ order.address }}</p>
+                                    <p>{{ order.city }}, {{ order.state }} - {{ order.zipcode }}</p>
+                                    <p><i class="fas fa-envelope"></i> {{ order.email }}</p>
+                                </div>
+                                
+                                <div class="detail-group">
+                                    <h5>Payment Information</h5>
+                                    <p><strong>Method:</strong> 
+                                        <span class="payment-method">
+                                            {{ order.get_payment_method_display }}
+                                        </span>
+                                    </p>
+                                    <p><strong>Total Amount:</strong> ₹{{ order.total_amount }}</p>
+                                    {% if order.discount_amount > 0 %}
+                                        <p><strong>Discount:</strong> ₹{{ order.discount_amount }}</p>
+                                    {% endif %}
+                                    {% if order.payment_method == 'online' and order.card_number %}
+                                        <p><strong>Card:</strong> **** **** **** {{ order.card_number|slice:"-4:" }}</p>
+                                        <p><strong>Expires:</strong> {{ order.expiry_date }}</p>
+                                    {% elif order.payment_method == 'upi' and order.upi_id %}
+                                        <p><strong>UPI ID:</strong> {{ order.upi_id }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="payment-info">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h6><i class="fas fa-box"></i> Order Summary</h6>
+                                        <p class="mb-0">
+                                            {% if order.status == 'delivered' %}
+                                                ✓ Order delivered successfully on {{ order.delivered_at|date:"M d, Y" }}
+                                            {% elif order.status == 'shipped' %}
+                                                🚚 Order has been shipped and is on the way!
+                                            {% elif order.status == 'out_for_delivery' %}
+                                                🏍️ Out for delivery! Your package will arrive soon.
+                                            {% elif order.status == 'processing' %}
+                                                ⚙️ Your order is being processed.
+                                            {% elif order.status == 'confirmed' %}
+                                                ✓ Order confirmed and will be processed soon.
+                                            {% elif order.status == 'cancelled' %}
+                                                ✗ Order has been cancelled.
+                                            {% else %}
+                                                Order placed successfully. We'll notify you once shipped.
+                                            {% endif %}
+                                        </p>
+                                        {% if order.estimated_delivery %}
+                                            <p class="mb-0 mt-2">
+                                                <i class="fas fa-calendar"></i> 
+                                                Estimated Delivery: {{ order.estimated_delivery|date:"M d, Y" }}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-4 text-md-end">
+                                        <div class="button-group">
+                                            {% if order.tracking_number %}
+                                                <a href="{% url 'track_order' order.tracking_number %}" class="btn-track">
+                                                    <i class="fas fa-map-marker-alt"></i> Track Order
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'product_detail' order.items.first.product.id %}" class="btn-view">
+                                                <i class="fas fa-eye"></i> View Products
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-orders">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h3>No Orders Yet</h3>
+                    <p class="mb-4">You haven't placed any orders with us yet.</p>
+                    <a href="{% url 'shop' %}" class="btn-primary-custom">
+                        <i class="fas fa-shopping-cart"></i> Start Shopping
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Simple animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderCards = document.querySelectorAll('.order-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            orderCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

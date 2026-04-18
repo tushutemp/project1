@@ -1,0 +1,602 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Céline Fashion - Elevate Your Style</title>
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Pacifico&family=Rubik+Bubbles&display=swap" rel="stylesheet">
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  
+  <style>
+    /* CSS Variables for consistent theming */
+    :root {
+      --primary-color: #8b5a2b;
+      --secondary-color: #d4af7a;
+      --accent-color: #5b4325;
+      --light-bg: #f9f3ec;
+      --dark-text: #333;
+      --light-text: #fff;
+      --gradient-primary: linear-gradient(135deg, #8b5a2b 0%, #d4af7a 100%);
+      --gradient-secondary: linear-gradient(135deg, #d4af7a 0%, #f9f3ec 100%);
+      --gradient-dark: linear-gradient(135deg, #5b4325 0%, #8b5a2b 100%);
+      --shadow: 0 4px 15px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--dark-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Navigation Styles */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 5%;
+      background: var(--gradient-primary);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--light-text);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .nav-links a {
+      color: var(--light-text);
+      font-weight: 500;
+      transition: var(--transition);
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-2px);
+    }
+
+    .nav-links a:not(.icon-link)::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--light-text);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .icon-link {
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.2);
+      padding: 0.5rem;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .icon-link:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.1);
+    }
+
+    /* Mobile Navigation */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      width: 30px;
+      height: 25px;
+      justify-content: space-between;
+    }
+
+    .menu-toggle span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background: var(--light-text);
+      border-radius: 3px;
+      transition: var(--transition);
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 350px;
+      height: 100vh;
+      background: var(--gradient-dark);
+      padding: 2rem;
+      z-index: 999;
+      transition: right 0.4s ease;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav a {
+      color: var(--light-text);
+      font-size: 1.2rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: var(--transition);
+    }
+
+    .mobile-nav a:hover {
+      padding-left: 10px;
+    }
+
+    .mobile-nav .close-btn {
+      align-self: flex-end;
+      font-size: 1.5rem;
+      border: none;
+      margin-bottom: 1rem;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 998;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Hero Section */
+    .background {
+      display: flex;
+      min-height: 85vh;
+      padding: 2rem 5%;
+      background: var(--gradient-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .background::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 40%;
+      height: 100%;
+      background: var(--gradient-primary);
+      clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
+      z-index: 1;
+    }
+
+    .left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .left p {
+      font-size: 3.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 2rem;
+      color: var(--accent-color);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .button {
+      padding: 0.9rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .button.primary {
+      background: var(--gradient-primary);
+      color: var(--light-text);
+    }
+
+    .button.primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(139, 90, 43, 0.3);
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--accent-color);
+      border: 2px solid var(--accent-color);
+    }
+
+    .button.secondary:hover {
+      background: var(--accent-color);
+      color: var(--light-text);
+    }
+
+    .img-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .img {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 1rem;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .img img:hover {
+      transform: scale(1.05);
+    }
+
+    .img img:nth-child(1) {
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+    }
+
+    .img img:nth-child(2) {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+    }
+
+    .img img:nth-child(3) {
+      grid-column: 1 / 2;
+      grid-row: 2 / 3;
+    }
+
+    .img img:nth-child(4) {
+      grid-column: 2 / 3;
+      grid-row: 2 / 3;
+    }
+
+    /* Paragraph Section */
+    .para {
+      text-align: center;
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #555;
+    }
+
+    /* More to Explore Section */
+    .explore-section {
+      padding: 5rem 5%;
+      background: var(--light-bg);
+    }
+
+    .explore-section h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: var(--accent-color);
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .explore-section h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--gradient-primary);
+    }
+
+    .explore-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .explore-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .explore-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+
+    .explore-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .explore-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .card-content h3 {
+      color: var(--accent-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.4rem;
+    }
+
+    .card-content p {
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .left p {
+        font-size: 2.8rem;
+      }
+      
+      .background::before {
+        width: 50%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .menu-toggle {
+        display: flex;
+      }
+      
+      .background {
+        flex-direction: column;
+        padding: 2rem 5%;
+      }
+      
+      .background::before {
+        display: none;
+      }
+      
+      .left {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      
+      .left p {
+        font-size: 2.5rem;
+      }
+      
+      .buttons {
+        justify-content: center;
+      }
+      
+      .img {
+        max-width: 400px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      nav {
+        padding: 1rem 5%;
+      }
+      
+      .logo {
+        font-size: 1.8rem;
+      }
+      
+      .left p {
+        font-size: 2rem;
+      }
+      
+      .buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .button {
+        width: 80%;
+      }
+      
+      .explore-section {
+        padding: 3rem 5%;
+      }
+      
+      .explore-section h2 {
+        font-size: 2rem;
+      }
+      
+      .para {
+        margin: 2.5rem auto;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+ {% include 'header.html' %}
+
+  <!-- HERO SECTION -->
+  <div class="background">
+    <div class="left">
+      <p>Elevate your style,<br>Embrace your story....</p>
+      <div class="buttons">
+        <button class="button primary"><a href="{% url 'about' %}">Shop Now</a></button>
+        <button class="button secondary"><a href="{% url 'about' %}">Explore</a></button>
+      </div>
+    </div>
+    <div class="img-container">
+      <div class="img">
+        <img src="{% static 'images/img1.jpg' %}" alt="fashion 1">
+        <img src="{% static 'images/newimg.jpg' %}" alt="fashion 2">
+        <img src="{% static 'images/newimg1.jpg' %}" alt="fashion 3">
+        <img src="{% static 'images/img4.jpg' %}" alt="fashion 4">
+      </div>
+    </div>
+  </div>
+
+  <!-- PARAGRAPH SECTION -->
+  <div class="para">
+    <p>Welcome to the Shop at Céline Fashion – your one-stop destination for stylish clothing for men, women, and kids. Browse our latest collections, explore a variety of outfits for every occasion, and enjoy a smooth shopping experience. Each item comes with detailed images, prices, and sizes to help you choose the perfect fit. Just click, add to cart, and get ready to elevate your wardrobe with fashion that speaks your style!</p>
+  </div>
+
+  <!-- MORE TO EXPLORE SECTION -->
+  <section class="explore-section">
+    <h2>More to Explore</h2>
+    <div class="explore-grid">
+      
+      <div class="explore-card">
+        <img src="{% static 'images/blouse.jpg' %}" alt="New Arrivals">
+        <div class="card-content">
+          <h3>New Arrivals</h3>
+          <p>Discover our latest trends for every season. Fresh styles, bold colors, and premium comfort all in one place.</p>
+        </div>
+      </div>
+
+      <div class="explore-card">
+        <img src="{% static 'images/suit.jpg' %}" alt="Styling Tips">
+        <div class="card-content">
+          <h3>Styling Tips</h3>
+          <p>Not sure how to wear it? Get pro styling tips and outfit ideas to create head-turning looks every day.</p>
+        </div>
+      </div>
+
+      <div class="explore-card">
+        <img src="{% static 'images/khoodie.jpg' %}" alt="Customer Favorites">
+        <div class="card-content">
+          <h3>Customer Favorites</h3>
+          <p>Loved by thousands! Check out top-rated items that our shoppers can't get enough of.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  {% include 'footer.html' %}
+
+  <script>
+    // Mobile Navigation Toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    const closeBtn = document.getElementById('closeBtn');
+    const overlay = document.getElementById('overlay');
+    
+    menuToggle.addEventListener('click', () => {
+      mobileNav.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+    
+    closeBtn.addEventListener('click', () => {
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+    
+    overlay.addEventListener('click', () => {
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+    
+    // Close mobile nav when clicking on a link
+    const mobileLinks = document.querySelectorAll('.mobile-nav a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    });
+  </script>
+</body>
+</html>

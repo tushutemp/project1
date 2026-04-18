@@ -1,0 +1,595 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Services - Fashion Boutique</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Pacifico&family=Rubik+Bubbles&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  
+  <style>
+    :root {
+      --primary-color: #8b5a2b;
+      --secondary-color: #d4af7a;
+      --accent-color: #5b4325;
+      --light-bg: #f9f3ec;
+      --dark-text: #333;
+      --light-text: #fff;
+      --gradient-primary: linear-gradient(135deg, #8b5a2b 0%, #d4af7a 100%);
+      --gradient-secondary: linear-gradient(135deg, #d4af7a 0%, #f9f3ec 100%);
+      --gradient-dark: linear-gradient(135deg, #5b4325 0%, #8b5a2b 100%);
+      --shadow: 0 4px 15px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--dark-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-color: var(--light-bg);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Navigation Styles */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 5%;
+      background: var(--gradient-primary);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--light-text);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .nav-links a {
+      color: var(--light-text);
+      font-weight: 500;
+      transition: var(--transition);
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-2px);
+    }
+
+    .nav-links a:not(.icon-link)::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--light-text);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .icon-link {
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.2);
+      padding: 0.5rem;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .icon-link:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.1);
+    }
+
+    /* Mobile Navigation */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      width: 30px;
+      height: 25px;
+      justify-content: space-between;
+    }
+
+    .menu-toggle span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background: var(--light-text);
+      border-radius: 3px;
+      transition: var(--transition);
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 350px;
+      height: 100vh;
+      background: var(--gradient-dark);
+      padding: 2rem;
+      z-index: 999;
+      transition: right 0.4s ease;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav a {
+      color: var(--light-text);
+      font-size: 1.2rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: var(--transition);
+    }
+
+    .mobile-nav a:hover {
+      padding-left: 10px;
+    }
+
+    .mobile-nav .close-btn {
+      align-self: flex-end;
+      font-size: 1.5rem;
+      border: none;
+      margin-bottom: 1rem;
+      background: none;
+      color: var(--light-text);
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 998;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Services Section */
+    .services-section {
+      padding: 80px 5%;
+      text-align: center;
+      background: var(--gradient-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .services-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%238b5a2b' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    .services-section h1 {
+      font-size: 3rem;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      animation: fadeInDown 1s ease;
+    }
+
+    .services-section p {
+      font-size: 1.2rem;
+      margin-bottom: 60px;
+      color: #555;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1.2s ease;
+    }
+
+    /* Services Grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      max-width: 1300px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Service Card */
+    .service-card {
+      background: #fff;
+      padding: 2.5rem 1.5rem;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .service-card.animated {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: var(--transition);
+      z-index: 0;
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+
+    .service-card:hover::before {
+      opacity: 0.05;
+    }
+
+    .service-card i {
+      font-size: 3.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+      transition: var(--transition);
+    }
+
+    .service-card:hover i {
+      transform: scale(1.1);
+      color: var(--accent-color);
+    }
+
+    .service-card h3 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      color: var(--accent-color);
+      position: relative;
+      z-index: 1;
+    }
+
+    .service-card p {
+      color: #666;
+      font-size: 1rem;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 0;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .services-section h1 {
+        font-size: 2.5rem;
+      }
+      
+      .services-section p {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .menu-toggle {
+        display: flex;
+      }
+      
+      .services-section {
+        padding: 60px 5%;
+      }
+      
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .service-card {
+        padding: 2rem 1.5rem;
+      }
+      
+      .service-card i {
+        font-size: 3rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      nav {
+        padding: 1rem 5%;
+      }
+      
+      .logo {
+        font-size: 1.8rem;
+      }
+      
+      .services-section {
+        padding: 50px 5%;
+      }
+      
+      .services-section h1 {
+        font-size: 2.2rem;
+      }
+      
+      .services-section p {
+        font-size: 1rem;
+        margin-bottom: 40px;
+      }
+      
+      .service-card {
+        padding: 1.5rem 1rem;
+      }
+      
+      .service-card i {
+        font-size: 2.5rem;
+      }
+      
+      .service-card h3 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  {% include 'header.html' %}
+
+  <!-- Services Section -->
+  <section class="services-section">
+    <h1>Our Fashion Services</h1>
+    <p>Discover the elegance we bring to every wardrobe. Tailored fashion, personal styling, and more.</p>
+
+    <div class="services-grid">
+      <div class="service-card" data-delay="1">
+        <i class="fas fa-tshirt"></i>
+        <h3>Custom Tailoring</h3>
+        <p>Perfect fits and timeless pieces crafted uniquely for you by our expert designers.</p>
+      </div>
+
+      <div class="service-card" data-delay="2">
+        <i class="fas fa-user-friends"></i>
+        <h3>Personal Styling</h3>
+        <p>One-on-one consultations with our fashion stylists to bring out the best version of you.</p>
+      </div>
+
+      <div class="service-card" data-delay="3">
+        <i class="fas fa-shipping-fast"></i>
+        <h3>Express Delivery</h3>
+        <p>Get your orders delivered at lightning speed with our premium delivery partners.</p>
+      </div>
+
+      <div class="service-card" data-delay="4">
+        <i class="fas fa-undo-alt"></i>
+        <h3>Easy Returns</h3>
+        <p>Hassle-free returns and exchanges within 30 days of purchase for your convenience.</p>
+      </div>
+
+      <div class="service-card" data-delay="5">
+        <i class="fas fa-gem"></i>
+        <h3>VIP Membership</h3>
+        <p>Exclusive access to limited collections, early sales, and special discounts.</p>
+      </div>
+
+      <div class="service-card" data-delay="6">
+        <i class="fas fa-calendar-alt"></i>
+        <h3>Seasonal Collections</h3>
+        <p>Fresh styles curated every season to keep your wardrobe up-to-date and fashionable.</p>
+      </div>
+
+      <div class="service-card" data-delay="7">
+        <i class="fas fa-hands-helping"></i>
+        <h3>Fashion Consultation</h3>
+        <p>Professional advice on building a versatile wardrobe that reflects your personal style.</p>
+      </div>
+
+      <div class="service-card" data-delay="8">
+        <i class="fas fa-gift"></i>
+        <h3>Gift Services</h3>
+        <p>Special gift wrapping and personalized notes to make your presents extra special.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  {% include 'footer.html' %}
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Mobile Navigation Toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    const closeBtn = document.getElementById('closeBtn');
+    const overlay = document.getElementById('overlay');
+
+    menuToggle.addEventListener('click', () => {
+      mobileNav.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    closeBtn.addEventListener('click', () => {
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    overlay.addEventListener('click', () => {
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close mobile nav when clicking on a link
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav a');
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    });
+
+    // Service Card Animations
+    function animateServiceCards() {
+      const serviceCards = document.querySelectorAll('.service-card');
+      
+      serviceCards.forEach(card => {
+        const delay = (card.dataset.delay || 1) * 100;
+        
+        setTimeout(() => {
+          card.classList.add('animated');
+        }, delay);
+      });
+    }
+
+    // Initialize animations when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      animateServiceCards();
+      
+      // Add scroll animation for service cards
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animation = 'slideInLeft 0.8s ease forwards';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.service-card').forEach(card => {
+        observer.observe(card);
+      });
+    });
+  </script>
+</body>
+</html>

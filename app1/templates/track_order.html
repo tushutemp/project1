@@ -1,0 +1,447 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - Céline</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS and JS (Free, no API key needed) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #8b5a2b;
+            --secondary-color: #d4af7a;
+            --light-bg: #f9f3ec;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--light-bg);
+        }
+        
+        .track-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .track-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .tracking-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            margin-top: 1rem;
+        }
+        
+        /* Progress Stepper */
+        .progress-stepper {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .step {
+            position: relative;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step.completed .step-circle {
+            background: #28a745;
+        }
+        
+        .step.active .step-circle {
+            background: var(--primary-color);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .step-line {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 3px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .step:last-child .step-line {
+            display: none;
+        }
+        
+        .step.completed .step-line {
+            background: #28a745;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 90, 43, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(139, 90, 43, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 90, 43, 0); }
+        }
+        
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        /* Map */
+        #map {
+            height: 400px;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            z-index: 1;
+        }
+        
+        /* Tracking Timeline */
+        .timeline {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .timeline-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            color: white;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .timeline-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-date {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .order-info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            background: white;
+            border-radius: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .step-label {
+                font-size: 0.7rem;
+            }
+            .step-circle {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+            .timeline-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <div class="track-container">
+        <div class="track-header">
+            <h2><i class="fas fa-map-marker-alt"></i> Track Your Order</h2>
+            <div class="tracking-number">
+                <i class="fas fa-barcode"></i> {{ order.tracking_number }}
+            </div>
+            <p class="mt-2 mb-0">Order placed on {{ order.created_at|date:"F d, Y" }}</p>
+        </div>
+        
+        <!-- Progress Stepper -->
+        <div class="progress-stepper">
+            <div class="steps-container">
+                {% for status in status_order %}
+                <div class="step 
+                    {% if order.status == status %}active{% endif %}
+                    {% if forloop.counter0 <= current_index %}completed{% endif %}">
+                    <div class="step-circle">
+                        {% if forloop.counter0 <= current_index %}
+                            <i class="fas fa-check"></i>
+                        {% else %}
+                            {{ forloop.counter }}
+                        {% endif %}
+                    </div>
+                    <div class="step-label">{{ status|title|replace_underscore }}</div>
+                    {% if not forloop.last %}
+                        <div class="step-line"></div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Map (Leaflet - No API Key Required) -->
+        <div id="map"></div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="order-info-card">
+                    <h5><i class="fas fa-info-circle"></i> Order Details</h5>
+                    <hr>
+                    <p><strong>Status:</strong> 
+                        <span class="badge 
+                            {% if order.status == 'delivered' %}bg-success
+                            {% elif order.status == 'cancelled' %}bg-danger
+                            {% elif order.status == 'out_for_delivery' %}bg-info
+                            {% elif order.status == 'shipped' %}bg-primary
+                            {% else %}bg-warning{% endif %}">
+                            {{ order.status|title|replace_underscore }}
+                        </span>
+                    </p>
+                    <p><strong>Estimated Delivery:</strong> 
+                        {% if order.estimated_delivery %}
+                            {{ order.estimated_delivery|date:"F d, Y" }}
+                        {% else %}
+                            Not yet scheduled
+                        {% endif %}
+                    </p>
+                    <p><strong>Total Amount:</strong> ₹{{ order.total_amount }}</p>
+                    <p><strong>Payment Method:</strong> {{ order.payment_method|upper }}</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="order-info-card">
+                    <h5><i class="fas fa-map-pin"></i> Delivery Address</h5>
+                    <hr>
+                    <p><strong>{{ order.full_name }}</strong></p>
+                    <p>{{ order.address }}, {{ order.city }}, {{ order.state }} - {{ order.zipcode }}</p>
+                    <p><i class="fas fa-envelope"></i> {{ order.email }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tracking Timeline -->
+        <div class="timeline">
+            <h4><i class="fas fa-history"></i> Tracking History</h4>
+            <hr>
+            {% for track in tracking_history %}
+            <div class="timeline-item">
+                <div class="timeline-icon">
+                    <i class="fas 
+                        {% if track.status == 'delivered' %}fa-check-circle
+                        {% elif track.status == 'shipped' %}fa-truck
+                        {% elif track.status == 'out_for_delivery' %}fa-motorcycle
+                        {% elif track.status == 'processing' %}fa-cogs
+                        {% elif track.status == 'confirmed' %}fa-check
+                        {% elif track.status == 'cancelled' %}fa-times-circle
+                        {% else %}fa-clock{% endif %}">
+                    </i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-title">{{ track.status|title|replace_underscore }}</div>
+                    {% if track.location %}
+                        <div><i class="fas fa-location-dot"></i> {{ track.location }}</div>
+                    {% endif %}
+                    {% if track.note %}
+                        <div class="text-muted small mt-1">{{ track.note }}</div>
+                    {% endif %}
+                    <div class="timeline-date">{{ track.created_at|date:"F d, Y g:i A" }}</div>
+                </div>
+            </div>
+            {% empty %}
+                <div class="text-center py-4">
+                    <i class="fas fa-truck fa-2x text-muted mb-2"></i>
+                    <p class="text-muted">No tracking updates available yet. Your order is being processed.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% include 'footer.html' %}
+    
+    <script>
+        // Safely parse coordinates with fallbacks
+        let deliveryLat = parseFloat("{{ order.delivery_latitude|default:'0' }}");
+        let deliveryLng = parseFloat("{{ order.delivery_longitude|default:'0' }}");
+        let currentLat = parseFloat("{{ order.current_latitude|default:'0' }}");
+        let currentLng = parseFloat("{{ order.current_longitude|default:'0' }}");
+        
+        // Default coordinates (Center of India - Delhi)
+        const DEFAULT_LAT = 28.6139;
+        const DEFAULT_LNG = 77.2090;
+        
+        // Validate coordinates
+        function isValidLatLng(lat, lng) {
+            return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+        }
+        
+        // Initialize map when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+        });
+        
+        function initMap() {
+            // Determine center point
+            let centerLat, centerLng;
+            
+            if (isValidLatLng(currentLat, currentLng)) {
+                centerLat = currentLat;
+                centerLng = currentLng;
+            } else if (isValidLatLng(deliveryLat, deliveryLng)) {
+                centerLat = deliveryLat;
+                centerLng = deliveryLng;
+            } else {
+                centerLat = DEFAULT_LAT;
+                centerLng = DEFAULT_LNG;
+            }
+            
+            // Create map
+            var map = L.map('map').setView([centerLat, centerLng], 12);
+            
+            // Add tile layer (OpenStreetMap - free)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Add delivery location marker
+            if (isValidLatLng(deliveryLat, deliveryLng)) {
+                var deliveryMarker = L.marker([deliveryLat, deliveryLng], {
+                    icon: L.divIcon({
+                        html: '<i class="fas fa-home" style="font-size: 24px; color: #dc3545; text-shadow: 0 0 3px white;"></i>',
+                        iconSize: [24, 24],
+                        className: 'custom-marker'
+                    })
+                }).addTo(map);
+                
+                deliveryMarker.bindPopup(`
+                    <b>Delivery Address</b><br>
+                    {{ order.full_name }}<br>
+                    {{ order.address }}, {{ order.city }}
+                `).openPopup();
+            }
+            
+            // Add current location marker (if available)
+            if (isValidLatLng(currentLat, currentLng)) {
+                var currentMarker = L.marker([currentLat, currentLng], {
+                    icon: L.divIcon({
+                        html: '<i class="fas fa-truck" style="font-size: 28px; color: #8b5a2b; text-shadow: 0 0 3px white;"></i>',
+                        iconSize: [28, 28],
+                        className: 'custom-marker'
+                    })
+                }).addTo(map);
+                
+                currentMarker.bindPopup(`
+                    <b>Current Location</b><br>
+                    Package is in transit
+                `);
+                
+                // Animate marker
+                animateMarker(currentMarker);
+            }
+            
+            // Draw route between current and delivery location if both exist
+            if (isValidLatLng(currentLat, currentLng) && isValidLatLng(deliveryLat, deliveryLng)) {
+                var routePoints = [
+                    [currentLat, currentLng],
+                    [deliveryLat, deliveryLng]
+                ];
+                
+                var routeLine = L.polyline(routePoints, {
+                    color: '#8b5a2b',
+                    weight: 3,
+                    opacity: 0.6,
+                    dashArray: '5, 10'
+                }).addTo(map);
+            }
+        }
+        
+        function animateMarker(marker) {
+            let frame = 0;
+            setInterval(() => {
+                frame = (frame + 1) % 360;
+                let icon = marker.getElement();
+                if (icon) {
+                    icon.style.transform = `translateY(${Math.sin(frame * 0.1) * 5}px)`;
+                }
+            }, 100);
+        }
+        
+        // Auto-refresh page every 30 seconds for live tracking (only if order not delivered/cancelled)
+        let orderStatus = "{{ order.status }}";
+        if (orderStatus !== 'delivered' && orderStatus !== 'cancelled') {
+            setTimeout(function() {
+                location.reload();
+            }, 30000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms</title>
+    <style>
+         body {
+            background: linear-gradient(to left, #785636, #b29f94);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+    
+        form {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        
+        h1 {
+            text-align: center;
+            color: rgb(87, 21, 21);
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+       
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input[type="date"],
+        /* input[type="radio"] */
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #785636;
+        }
+
+      
+        .gender {
+    display: flex;
+    gap: 20px;
+    
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.gender label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: bold;
+    margin: 0;
+}
+
+        .gender input[type="radio"] {
+            margin-right: 6px;
+        }
+
+        
+
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #785636;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #5a3f2a;
+        }
+        .gender{
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        
+        <h1>Forms</h1>
+       
+        
+         <!-- <legend>My Personal Information</legend> -->
+        
+        <label for="name">Name :</label >
+        <input type="text" id="name" value="{{dd.Name}}" name="name" placeholder="Enter your name" required >
+<br><br>
+        <label for="email">Email :</label>
+        <input type="email" id="email"  value="{{dd.Email}}" name="email" placeholder="Enter your Email"required>
+<br><br>
+
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Password" value="{{dd.Password}}">
+        <br><br>
+
+
+        <label for="phone">Phone :</label>
+        <input type="number" id="phone" name="phone" placeholder="Your Number" value="{{dd.Phone}}">
+
+        <br><br>
+        <label for="dob">DOB :</label>
+        <input type="date" id="date" name="dob" placeholder="Your DOB" value="{{dd.DOB}}">
+<br><br>
+<div class="gender">
+        <label for="gender">Gender :</label>
+        <input type="radio" id="male" name="gender" value="male">
+        <label for="male">Male</label>
+        <input type="radio" id="female" name="gender" value="female">
+        <label for="male">Female</label>
+        </div>
+<br><br>
+<label for="address">Address</label>
+<textarea cols="30" rows="5" placeholder="Your Address" name="address" value="{{dd.Address}}"></textarea>
+
+<br><br>
+        <!-- <button type="submit">Submit</button> -->
+        <button>SUBMIT</button>
+    </form>
+  {% include 'footer.html' %}
+</body>
+</html>
